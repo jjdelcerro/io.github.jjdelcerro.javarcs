@@ -4,6 +4,7 @@ import io.github.jjdelcerro.javarcs.lib.RCSAccessEntry;
 import io.github.jjdelcerro.javarcs.lib.RCSDelta;
 import io.github.jjdelcerro.javarcs.lib.RCSFile;
 import io.github.jjdelcerro.javarcs.lib.RCSLockEntry;
+import io.github.jjdelcerro.javarcs.lib.RCSSymbolEntry;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -140,8 +141,8 @@ public class RCSFileImpl implements RCSFile {
   }
 
   @Override
-  public List<RCSSymbolEntryImpl> getSymbolicNames() {
-    return symbolicNames;
+  public List<RCSSymbolEntry> getSymbolicNames() {
+    return (List)symbolicNames;
   }
 
   public void addSymbolicName(RCSSymbolEntryImpl entry) {

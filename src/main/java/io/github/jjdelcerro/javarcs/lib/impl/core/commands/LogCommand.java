@@ -4,10 +4,10 @@ import io.github.jjdelcerro.javarcs.lib.RCSAccessEntry;
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
 import io.github.jjdelcerro.javarcs.lib.RCSDelta;
 import io.github.jjdelcerro.javarcs.lib.RCSLockEntry;
+import io.github.jjdelcerro.javarcs.lib.RCSSymbolEntry;
 import io.github.jjdelcerro.javarcs.lib.commands.LogOptions;
 import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileFlag;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSSymbolEntryImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSFileUtils;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSParser;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSTimeUtils;
@@ -107,7 +107,7 @@ public class LogCommand implements RCSCommand<LogOptions> {
     System.out.println();
 
     System.out.println("symbolic names:");
-    for (RCSSymbolEntryImpl symbol : rcsFile.getSymbolicNames()) {
+    for (RCSSymbolEntry symbol : rcsFile.getSymbolicNames()) {
       System.out.println("\t" + symbol.getName() + ": " + symbol.getRevisionNumber());
     }
 

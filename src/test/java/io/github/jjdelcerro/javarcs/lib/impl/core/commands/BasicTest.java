@@ -5,6 +5,7 @@ import io.github.jjdelcerro.javarcs.lib.RCSFile;
 import io.github.jjdelcerro.javarcs.lib.RCSLocator;
 import io.github.jjdelcerro.javarcs.lib.RCSManager;
 import io.github.jjdelcerro.javarcs.lib.commands.CheckinOptions;
+import io.github.jjdelcerro.javarcs.lib.commands.CheckoutOptions;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -114,4 +115,29 @@ class BasicTest {
         assertThat(workFile).isRegularFile();
     }
 
+    @Test
+    void checkCreateWith2RevisionsAndCheckoutR1() throws Exception {
+        RCSManager manager = RCSLocator.getRCSManager();
+
+        do_first_revision();
+        do_second_revision();
+        
+        Path rcsFile = tempDir.resolve("test.txt,jv");
+        RCSFile rcs = manager.getRCSFile(rcsFile);
+        assertThat(rcs.getDeltas()).isNotEmpty().hasSize(2);
+
+        CheckoutOptions checkoutOptions = manager.createCheckoutOptions(rcsFile)
+                .setRevision("1.1")
+                .setQuiet(true)
+        ;
+        RCSCommand command = manager.create(checkoutOptions);
+        command.execute(checkoutOptions);
+        
+        assertThat(rcsFile).exists();
+        assertThat(rcsFile).isRegularFile();
+
+        Path workFile = tempDir.resolve("test.txt");
+        assertThat(workFile).exists();
+        assertThat(workFile).isRegularFile();
+    }
 }

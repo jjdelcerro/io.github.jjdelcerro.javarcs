@@ -38,8 +38,8 @@ public class DiffAlgorithm {
 
             // 2. Generar el formato Unified Diff (con 3 líneas de contexto por defecto)
             List<String> unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff(
-                    originalPath.getFileName().toString(),
-                    revisedPath.getFileName().toString(),
+                    "old",
+                    "new",
                     originalLines,
                     patch,
                     3

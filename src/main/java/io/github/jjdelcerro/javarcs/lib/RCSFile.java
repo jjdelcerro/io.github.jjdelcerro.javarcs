@@ -1,9 +1,5 @@
 package io.github.jjdelcerro.javarcs.lib;
 
-import io.github.jjdelcerro.javarcs.lib.RCSAccessEntry;
-import io.github.jjdelcerro.javarcs.lib.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.RCSRevisionNumber;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSSymbolEntryImpl;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -32,7 +28,7 @@ public interface RCSFile {
 
   List<RCSLockEntry> getLocks();
 
-  List<RCSSymbolEntryImpl> getSymbolicNames();
+  List<RCSSymbolEntry> getSymbolicNames();
 
   boolean isBinary();
   

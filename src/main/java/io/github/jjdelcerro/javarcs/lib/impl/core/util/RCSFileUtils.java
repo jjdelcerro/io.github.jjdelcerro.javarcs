@@ -56,9 +56,9 @@ public class RCSFileUtils {
     if (parentDir != null) {
       Path rcsSubDir = parentDir.resolve(RCSDIR);
       if (Files.isDirectory(rcsSubDir)) {
-        potentialRCSPaths.add(rcsSubDir.resolve(fileName + ",v"));
+        potentialRCSPaths.add(rcsSubDir.resolve(fileName + ",jv"));
       }
-      potentialRCSPaths.add(parentDir.resolve(fileName + ",v"));
+      potentialRCSPaths.add(parentDir.resolve(fileName + ",jv"));
     }
     return potentialRCSPaths.stream().filter(Files::exists).findFirst();
   }
