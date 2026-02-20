@@ -1,24 +1,27 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.model;
 
+import io.github.jjdelcerro.javarcs.lib.RCSSymbolEntry;
 import java.util.Objects;
 
 /**
  * Representa una entrada de símbolo en un archivo RCS.
  */
-public class RCSSymbolEntry {
+public class RCSSymbolEntryImpl implements RCSSymbolEntry {
     private final String name;
-    private final RCSRevisionNumber revisionNumber;
+    private final RCSRevisionNumberImpl revisionNumber;
 
-    public RCSSymbolEntry(String name, RCSRevisionNumber revisionNumber) {
+    public RCSSymbolEntryImpl(String name, RCSRevisionNumberImpl revisionNumber) {
         this.name = Objects.requireNonNull(name, "Symbol name cannot be null");
         this.revisionNumber = Objects.requireNonNull(revisionNumber, "Revision number cannot be null");
     }
 
+  @Override
     public String getName() {
         return name;
     }
 
-    public RCSRevisionNumber getRevisionNumber() {
+  @Override
+    public RCSRevisionNumberImpl getRevisionNumber() {
         return revisionNumber;
     }
 
@@ -26,7 +29,7 @@ public class RCSSymbolEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RCSSymbolEntry that = (RCSSymbolEntry) o;
+        RCSSymbolEntryImpl that = (RCSSymbolEntryImpl) o;
         return Objects.equals(name, that.name) && Objects.equals(revisionNumber, that.revisionNumber);
     }
 

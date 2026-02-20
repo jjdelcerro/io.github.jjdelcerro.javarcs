@@ -1,11 +1,12 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
+import io.github.jjdelcerro.javarcs.lib.RCSLockEntry;
 import io.github.jjdelcerro.javarcs.lib.commands.CleanOptions;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSLockEntry;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSLockEntryImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.temp.TemporaryFileManager;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSDeltaProcessor;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSFileUtils;
@@ -59,7 +60,7 @@ public class CleanCommand implements RCSCommand<CleanOptions> {
 
     private void processFile(Path workFilePath, CleanOptions options) throws RCSException, IOException {
         Path rcsFilePath;
-        RCSFile rcsFile;
+        RCSFileImpl rcsFile;
         
         if (!Files.exists(workFilePath) || Files.isDirectory(workFilePath)) {
             LOGGER.fine("Saltando: " + workFilePath + " no es un archivo regular.");
@@ -76,9 +77,9 @@ public class CleanCommand implements RCSCommand<CleanOptions> {
         RCSParser parser = new RCSParser();
         rcsFile = parser.parse(rcsFilePath);
 
-        RCSRevisionNumber revisionToCompare;
+        RCSRevisionNumberImpl revisionToCompare;
         if (options.getRevision() != null && !options.getRevision().isEmpty()) {
-            revisionToCompare = RCSRevisionNumber.parse(options.getRevision());
+            revisionToCompare = RCSRevisionNumberImpl.parse(options.getRevision());
         } else {
             revisionToCompare = rcsFile.getHead();
         }
@@ -88,7 +89,7 @@ public class CleanCommand implements RCSCommand<CleanOptions> {
             return;
         }
         
-        RCSDelta headDelta = rcsFile.findDelta(revisionToCompare);
+        RCSDeltaImpl headDelta = rcsFile.findDelta(revisionToCompare);
         if (headDelta == null) {
             throw new RCSException("No se encontró el delta para la revisión " + revisionToCompare);
         }

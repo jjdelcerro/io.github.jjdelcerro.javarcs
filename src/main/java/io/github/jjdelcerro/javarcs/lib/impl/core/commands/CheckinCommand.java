@@ -2,9 +2,9 @@ package io.github.jjdelcerro.javarcs.lib.impl.core.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
 import io.github.jjdelcerro.javarcs.lib.commands.CheckinOptions;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.temp.TemporaryFileManager;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.DiffAlgorithm;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSDeltaProcessor;
@@ -27,21 +27,21 @@ public class CheckinCommand implements RCSCommand<CheckinOptions> {
     try {
       boolean isBinary = RCSFileUtils.isBinaryFile(workFilePath);
       Optional<Path> rcsPathOpt = RCSFileUtils.chooseRCSFile(workFilePath, null);
-      RCSFile rcsFile = rcsPathOpt.isPresent() ? new RCSParser().parse(rcsPathOpt.get()) : new RCSFile(workFilePath.resolveSibling(workFilePath.getFileName() + ",jv"));
+      RCSFileImpl rcsFile = rcsPathOpt.isPresent() ? new RCSParser().parse(rcsPathOpt.get()) : new RCSFileImpl(workFilePath.resolveSibling(workFilePath.getFileName() + ",jv"));
 
       if (isBinary) {
         rcsFile.setExpandKeywords("b");
       }
 
-      RCSRevisionNumber currentHead = rcsFile.getHead();
-      RCSRevisionNumber newRev = (currentHead == null) ? RCSRevisionNumber.parse("1.1") : currentHead.increment();
+      RCSRevisionNumberImpl currentHead = rcsFile.getHead();
+      RCSRevisionNumberImpl newRev = (currentHead == null) ? RCSRevisionNumberImpl.parse("1.1") : currentHead.increment();
 
       byte[] workContent = Files.readAllBytes(workFilePath);
-      RCSDelta newDelta = new RCSDelta(newRev);
+      RCSDeltaImpl newDelta = new RCSDeltaImpl(newRev);
       newDelta.setDeltaText(workContent); // La nueva HEAD siempre tiene el contenido completo
 
       if (currentHead != null) {
-        RCSDelta oldDelta = rcsFile.findDelta(currentHead);
+        RCSDeltaImpl oldDelta = rcsFile.findDelta(currentHead);
         if (isBinary) {
           // Binario: No hay diff, la versión anterior se queda como snapshot completo (Reverse Delta simplificado)
           // Nota: En un sistema real, aquí gestionarías el ahorro de espacio.

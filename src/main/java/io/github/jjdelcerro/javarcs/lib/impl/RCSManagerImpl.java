@@ -2,6 +2,7 @@ package io.github.jjdelcerro.javarcs.lib.impl;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
 import io.github.jjdelcerro.javarcs.lib.RCSCommandOptions;
+import io.github.jjdelcerro.javarcs.lib.RCSFile;
 import io.github.jjdelcerro.javarcs.lib.RCSManager;
 import io.github.jjdelcerro.javarcs.lib.commands.CheckinOptions;
 import io.github.jjdelcerro.javarcs.lib.commands.CheckoutOptions;
@@ -24,6 +25,8 @@ import io.github.jjdelcerro.javarcs.lib.impl.core.commands.LogCommand;
 import io.github.jjdelcerro.javarcs.lib.impl.core.commands.LogOptionsImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.commands.MergeCommand;
 import io.github.jjdelcerro.javarcs.lib.impl.core.commands.MergeOptionsImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSParser;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -91,7 +94,14 @@ public class RCSManagerImpl implements RCSManager {
     if( options instanceof MergeOptions ) {
       return new MergeCommand();
     }
-    throw new IllegalArgumentException("Can't create command from "+options.getClass().getName()+".");
+    throw new IllegalArgumentException("Can't create command from "+(options==null?"null":options.getClass().getName())+".");
+  }
+
+  @Override
+  public RCSFile getRCSFile(Path workFilePath) {
+    RCSParser parser = new RCSParser();    
+    RCSFile rcsFile = parser.parse(workFilePath);
+    return rcsFile;
   }
 
 }

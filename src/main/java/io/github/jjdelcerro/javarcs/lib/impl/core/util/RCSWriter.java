@@ -1,7 +1,8 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.util;
 
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
+import io.github.jjdelcerro.javarcs.lib.RCSDelta;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileFlag;
 import io.github.jjdelcerro.javarcs.lib.impl.core.temp.TemporaryFileManager;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
@@ -24,7 +25,7 @@ public class RCSWriter {
   private RCSWriter() {
   }
 
-  public static void write(RCSFile rcsFile, Path outputPath) {
+  public static void write(RCSFileImpl rcsFile, Path outputPath) {
     Path parentDir = outputPath.toAbsolutePath().getParent();
     if (parentDir == null) {
       parentDir = java.nio.file.Paths.get(".");
@@ -56,7 +57,7 @@ public class RCSWriter {
     }
   }
 
-  private static void writeAdminSection(OutputStream os, RCSFile rcsFile) throws IOException {
+  private static void writeAdminSection(OutputStream os, RCSFileImpl rcsFile) throws IOException {
     writeText(os, "head\t" + (rcsFile.getHead() != null ? rcsFile.getHead().toString() : "") + ";\n");
     if (rcsFile.getBranch() != null) {
       writeText(os, "branch\t" + rcsFile.getBranch().toString() + ";\n");
@@ -76,7 +77,7 @@ public class RCSWriter {
     }
   }
 
-  private static void writeDeltasSection(OutputStream os, RCSFile rcsFile) throws IOException {
+  private static void writeDeltasSection(OutputStream os, RCSFileImpl rcsFile) throws IOException {
     List<RCSDelta> sortedDeltas = new ArrayList<>(rcsFile.getDeltas());
     sortedDeltas.sort((d1, d2) -> d2.getRevisionNumber().compareTo(d1.getRevisionNumber(), 0));
     SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US);
@@ -88,13 +89,13 @@ public class RCSWriter {
     }
   }
 
-  private static void writeDescriptionSection(OutputStream os, RCSFile rcsFile) throws IOException {
+  private static void writeDescriptionSection(OutputStream os, RCSFileImpl rcsFile) throws IOException {
     writeText(os, "desc\n");
     writeQuotedBytes(os, rcsFile.getDescription() != null ? rcsFile.getDescription().getBytes(StandardCharsets.UTF_8) : new byte[0]);
     writeNewline(os);
   }
 
-  private static void writeDeltaTextsSection(OutputStream os, RCSFile rcsFile) throws IOException {
+  private static void writeDeltaTextsSection(OutputStream os, RCSFileImpl rcsFile) throws IOException {
     List<RCSDelta> sortedDeltas = new ArrayList<>(rcsFile.getDeltas());
     sortedDeltas.sort((d1, d2) -> d2.getRevisionNumber().compareTo(d1.getRevisionNumber(), 0));
 

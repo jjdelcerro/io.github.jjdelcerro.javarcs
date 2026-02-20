@@ -2,8 +2,8 @@ package io.github.jjdelcerro.javarcs.lib.impl.core.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
 import io.github.jjdelcerro.javarcs.lib.commands.DiffOptions;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.temp.TemporaryFileManager;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.DiffAlgorithm;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSDeltaProcessor;
@@ -35,16 +35,16 @@ public class DiffCommand implements RCSCommand<DiffOptions> {
           continue;
         }
 
-        RCSFile rcsFile = new RCSParser().parse(rcsPath.get());
+        RCSFileImpl rcsFile = new RCSParser().parse(rcsPath.get());
 
-        RCSRevisionNumber rev1Num = options.getRevision1() != null
-                ? RCSRevisionNumber.parse(options.getRevision1()) : rcsFile.getHead();
+        RCSRevisionNumberImpl rev1Num = options.getRevision1() != null
+                ? RCSRevisionNumberImpl.parse(options.getRevision1()) : rcsFile.getHead();
 
         byte[] content1 = RCSDeltaProcessor.reconstructFileContent(rcsFile, rev1Num);
         byte[] content2;
 
         if (options.getRevision2() != null) {
-          content2 = RCSDeltaProcessor.reconstructFileContent(rcsFile, RCSRevisionNumber.parse(options.getRevision2()));
+          content2 = RCSDeltaProcessor.reconstructFileContent(rcsFile, RCSRevisionNumberImpl.parse(options.getRevision2()));
         } else {
           content2 = Files.readAllBytes(workFile);
         }

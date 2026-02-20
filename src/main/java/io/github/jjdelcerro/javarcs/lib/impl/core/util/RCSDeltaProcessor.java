@@ -4,9 +4,9 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
 
 import java.nio.charset.StandardCharsets;
@@ -34,7 +34,7 @@ public class RCSDeltaProcessor {
    * @return Array de bytes con el contenido reconstruido.
    * @throws RCSException si la revisión no existe o el parche está corrupto.
    */
-  public static byte[] reconstructFileContent(RCSFile rcsFile, RCSRevisionNumber targetRevision) {
+  public static byte[] reconstructFileContent(RCSFileImpl rcsFile, RCSRevisionNumberImpl targetRevision) {
     if (rcsFile == null || targetRevision == null) {
       throw new RCSException("Parámetros insuficientes para la reconstrucción.");
     }
@@ -43,7 +43,7 @@ public class RCSDeltaProcessor {
     // Si el archivo está marcado como binario (-kb o expand b), 
     // cada delta contiene el archivo completo. No hay que aplicar parches.
     if ("b".equals(rcsFile.getExpandKeywords())) {
-      RCSDelta targetDelta = rcsFile.findDelta(targetRevision);
+      RCSDeltaImpl targetDelta = rcsFile.findDelta(targetRevision);
       if (targetDelta == null) {
         throw new RCSException("No se encontró la revisión binaria: " + targetRevision);
       }
@@ -52,12 +52,12 @@ public class RCSDeltaProcessor {
 
     // --- CASO 2: ARCHIVOS DE TEXTO (Reverse Delta) ---
     // 1. Empezamos siempre por la HEAD (que tiene el texto completo)
-    RCSRevisionNumber headRev = rcsFile.getHead();
+    RCSRevisionNumberImpl headRev = rcsFile.getHead();
     if (headRev == null) {
       throw new RCSException("El archivo RCS no tiene una revisión HEAD definida.");
     }
 
-    RCSDelta headDelta = rcsFile.findDelta(headRev);
+    RCSDeltaImpl headDelta = rcsFile.findDelta(headRev);
     if (headDelta == null) {
       throw new RCSException("Falta el cuerpo (delta) de la revisión HEAD " + headRev);
     }
@@ -72,21 +72,21 @@ public class RCSDeltaProcessor {
     // 2. Si es una revisión antigua, transformamos los bytes en líneas
     // y empezamos a aplicar parches hacia atrás.
     List<String> currentLines = bytesToLines(currentBytes);
-    RCSRevisionNumber currentCursor = headRev;
+    RCSRevisionNumberImpl currentCursor = headRev;
 
     // Seguimos la cadena de punteros 'next' (que en RCS van de nuevo a viejo)
     while (currentCursor != null && !currentCursor.equals(targetRevision)) {
-      RCSDelta deltaCursor = rcsFile.findDelta(currentCursor);
+      RCSDeltaImpl deltaCursor = rcsFile.findDelta(currentCursor);
 
       // Obtenemos la siguiente revisión en la cadena hacia el pasado
-      RCSRevisionNumber nextRev = deltaCursor.getNextRevision();
+      RCSRevisionNumberImpl nextRev = deltaCursor.getNextRevision();
       if (nextRev == null) {
         break; // Hemos llegado al final del historial (revisión 1.1)
       }
 
       // En el modelo Reverse Delta, el parche para obtener la versión X 
       // está guardado precisamente en el bloque 'text' de la versión X.
-      RCSDelta nextDelta = rcsFile.findDelta(nextRev);
+      RCSDeltaImpl nextDelta = rcsFile.findDelta(nextRev);
       if (nextDelta == null || nextDelta.getDeltaText() == null) {
         throw new RCSException("Delta corrupto o faltante en la cadena: " + nextRev);
       }

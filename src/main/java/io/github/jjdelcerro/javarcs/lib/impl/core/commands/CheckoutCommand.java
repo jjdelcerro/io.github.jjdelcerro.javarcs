@@ -2,9 +2,9 @@ package io.github.jjdelcerro.javarcs.lib.impl.core.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
 import io.github.jjdelcerro.javarcs.lib.commands.CheckoutOptions;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSDeltaProcessor;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSFileUtils;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSKeywordExpander;
@@ -33,11 +33,11 @@ public class CheckoutCommand implements RCSCommand<CheckoutOptions> {
         throw new RCSException("Archivo RCS no encontrado para " + workFilePath);
       }
 
-      RCSFile rcsFile = new RCSParser().parse(rcsPathOpt.get());
+      RCSFileImpl rcsFile = new RCSParser().parse(rcsPathOpt.get());
 
       // Determinar revisión
-      RCSRevisionNumber revToGet = (options.getRevision() != null)
-              ? RCSRevisionNumber.parse(options.getRevision()) : rcsFile.getHead();
+      RCSRevisionNumberImpl revToGet = (options.getRevision() != null)
+              ? RCSRevisionNumberImpl.parse(options.getRevision()) : rcsFile.getHead();
 
       if (revToGet == null) {
         throw new RCSException("El archivo RCS no contiene revisiones.");
@@ -47,7 +47,7 @@ public class CheckoutCommand implements RCSCommand<CheckoutOptions> {
       byte[] content = RCSDeltaProcessor.reconstructFileContent(rcsFile, revToGet);
 
       // 2. Expandir palabras clave (opcional según flags)
-      RCSDelta delta = rcsFile.findDelta(revToGet);
+      RCSDeltaImpl delta = rcsFile.findDelta(revToGet);
       content = RCSKeywordExpander.expandKeywords(rcsFile, delta, content, options.getKeywordExpansionMode());
 
       // 3. Escribir resultado

@@ -1,5 +1,6 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.model;
 
+import io.github.jjdelcerro.javarcs.lib.RCSDelta;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,10 +10,10 @@ import java.util.Objects;
  * Representa un delta (revisión) dentro de un archivo RCS. Corresponde a la
  * estructura `rcs_delta` en la implementación C.
  */
-public class RCSDelta {
+public class RCSDeltaImpl implements RCSDelta {
 
-  private final RCSRevisionNumber revisionNumber;
-  private RCSRevisionNumber nextRevision; // rd_next
+  private final RCSRevisionNumberImpl revisionNumber;
+  private RCSRevisionNumberImpl nextRevision; // rd_next
   private Date date; // rd_date
   private String author; // rd_author
   private String state; // rd_state
@@ -31,25 +32,28 @@ public class RCSDelta {
    *
    * @param revisionNumber El número de revisión de este delta.
    */
-  public RCSDelta(RCSRevisionNumber revisionNumber) {
+  public RCSDeltaImpl(RCSRevisionNumberImpl revisionNumber) {
     this.revisionNumber = Objects.requireNonNull(revisionNumber, "Revision number cannot be null");
     this.branches = new ArrayList<>();
     // Valores por defecto (adaptados de la implementación C si aplica)
     this.state = "Exp"; // RCS_STATE_EXP
   }
 
-  public RCSRevisionNumber getRevisionNumber() {
+  @Override
+  public RCSRevisionNumberImpl getRevisionNumber() {
     return revisionNumber;
   }
 
-  public RCSRevisionNumber getNextRevision() {
+  @Override
+  public RCSRevisionNumberImpl getNextRevision() {
     return nextRevision;
   }
 
-  public void setNextRevision(RCSRevisionNumber nextRevision) {
+  public void setNextRevision(RCSRevisionNumberImpl nextRevision) {
     this.nextRevision = nextRevision;
   }
 
+  @Override
   public Date getDate() {
     return date;
   }
@@ -58,6 +62,7 @@ public class RCSDelta {
     this.date = date;
   }
 
+  @Override
   public String getAuthor() {
     return author;
   }
@@ -66,6 +71,7 @@ public class RCSDelta {
     this.author = author;
   }
 
+  @Override
   public String getState() {
     return state;
   }
@@ -74,6 +80,7 @@ public class RCSDelta {
     this.state = state;
   }
 
+  @Override
   public String getCommitId() {
     return commitId;
   }
@@ -82,6 +89,7 @@ public class RCSDelta {
     this.commitId = commitId;
   }
 
+  @Override
   public String getLogMessage() {
     return logMessage;
   }
@@ -90,6 +98,7 @@ public class RCSDelta {
     this.logMessage = logMessage;
   }
 
+  @Override
   public String getLocker() {
     return locker;
   }
@@ -98,6 +107,7 @@ public class RCSDelta {
     this.locker = locker;
   }
 
+  @Override
   public byte[] getDeltaText() {
     return deltaText;
   }
@@ -114,6 +124,7 @@ public class RCSDelta {
     this.branches.add(branch);
   }
 
+  @Override
   public boolean isDead() {
     return isDead;
   }
@@ -122,6 +133,7 @@ public class RCSDelta {
     isDead = dead;
   }
 
+  @Override
   public boolean isSelected() {
     return isSelected;
   }
@@ -138,7 +150,7 @@ public class RCSDelta {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    RCSDelta rcsDelta = (RCSDelta) o;
+    RCSDeltaImpl rcsDelta = (RCSDeltaImpl) o;
     return isDead == rcsDelta.isDead && isSelected == rcsDelta.isSelected && Objects.equals(revisionNumber, rcsDelta.revisionNumber);
   }
 

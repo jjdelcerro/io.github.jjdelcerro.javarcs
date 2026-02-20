@@ -1,13 +1,13 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.util;
 
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSAccessEntry;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSAccessEntryImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSBranchEntry;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileFlag;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSLockEntry;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSSymbolEntry;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSLockEntryImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSSymbolEntryImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,7 +54,7 @@ public class RCSParser {
   private PushbackInputStream is;
   private int currentLineNumber;
   private Token peekedToken;
-  private RCSFile rcsFile;
+  private RCSFileImpl rcsFile;
 
   public RCSParser() {
   }
@@ -62,8 +62,8 @@ public class RCSParser {
   /**
    * Parsea un archivo RCS completo.
    */
-  public RCSFile parse(Path path) {
-    this.rcsFile = new RCSFile(path);
+  public RCSFileImpl parse(Path path) {
+    this.rcsFile = new RCSFileImpl(path);
     this.currentLineNumber = 1;
     this.peekedToken = null;
 
@@ -98,7 +98,7 @@ public class RCSParser {
 
     expectKeyword("access");
     while (peekToken().type == TokenType.WORD) {
-      rcsFile.addAccessEntry(new RCSAccessEntry(expectString()));
+      rcsFile.addAccessEntry(new RCSAccessEntryImpl(expectString()));
     }
     expectSeparator(';');
 
@@ -106,7 +106,7 @@ public class RCSParser {
     while (peekToken().type == TokenType.WORD) {
       String name = expectString();
       expectSeparator(':');
-      rcsFile.addSymbolicName(new RCSSymbolEntry(name, expectRevision()));
+      rcsFile.addSymbolicName(new RCSSymbolEntryImpl(name, expectRevision()));
     }
     expectSeparator(';');
 
@@ -114,7 +114,7 @@ public class RCSParser {
     while (peekToken().type == TokenType.WORD) {
       String user = expectString();
       expectSeparator(':');
-      rcsFile.addLock(new RCSLockEntry(user, expectRevision()));
+      rcsFile.addLock(new RCSLockEntryImpl(user, expectRevision()));
     }
     if (peekKeyword("strict")) {
       consume();
@@ -137,7 +137,7 @@ public class RCSParser {
 
   private void parseDeltasSection() throws IOException {
     while (peekToken().type == TokenType.REVISION) {
-      RCSDelta delta = new RCSDelta(expectRevision());
+      RCSDeltaImpl delta = new RCSDeltaImpl(expectRevision());
       rcsFile.addDelta(delta);
 
       expectKeyword("date");
@@ -173,8 +173,8 @@ public class RCSParser {
 
   private void parseDeltaTextsSection() throws IOException {
     while (peekToken().type != TokenType.EOF) {
-      RCSRevisionNumber rev = expectRevision();
-      RCSDelta delta = rcsFile.findDelta(rev);
+      RCSRevisionNumberImpl rev = expectRevision();
+      RCSDeltaImpl delta = rcsFile.findDelta(rev);
       if (delta == null) {
         throw new RCSException("Línea " + currentLineNumber + ": Delta texto para revisión inexistente: " + rev);
       }
@@ -326,12 +326,12 @@ public class RCSParser {
     }
   }
 
-  private RCSRevisionNumber expectRevision() throws IOException {
+  private RCSRevisionNumberImpl expectRevision() throws IOException {
     Token t = nextToken();
     if (t.type != TokenType.REVISION) {
       throw new RCSException("Línea " + t.line + ": Se esperaba número de revisión.");
     }
-    return RCSRevisionNumber.parse(t.textValue);
+    return RCSRevisionNumberImpl.parse(t.textValue);
   }
 
   private String expectString() throws IOException {

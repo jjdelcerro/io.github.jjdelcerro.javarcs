@@ -1,7 +1,7 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.util;
 
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDeltaImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -49,7 +49,7 @@ public class RCSKeywordExpander {
     /**
      * Expande palabras clave en el contenido.
      */
-    public static byte[] expandKeywords(RCSFile rcsFile, RCSDelta delta, byte[] content, int mode) {
+    public static byte[] expandKeywords(RCSFileImpl rcsFile, RCSDeltaImpl delta, byte[] content, int mode) {
         if (content == null || mode == KWEXP_NONE || (mode & KWEXP_OLD) != 0) {
             return content;
         }
@@ -81,7 +81,7 @@ public class RCSKeywordExpander {
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    private static String formatExpansion(RCSKeyword kw, RCSFile rcsFile, RCSDelta delta, int mode) {
+    private static String formatExpansion(RCSKeyword kw, RCSFileImpl rcsFile, RCSDeltaImpl delta, int mode) {
         StringBuilder val = new StringBuilder("$");
         boolean showName = (mode & KWEXP_NAME) != 0;
         boolean showVal  = (mode & KWEXP_VAL) != 0;

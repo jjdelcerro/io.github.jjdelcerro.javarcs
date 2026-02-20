@@ -1,6 +1,6 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.util;
 
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class RCSFileUtils {
     }
   }
 
-  public static void setDescription(RCSFile rcsFile, String source, boolean interactive) {
+  public static void setDescription(RCSFileImpl rcsFile, String source, boolean interactive) {
     String descriptionContent;
     if (source == null) {
       descriptionContent = promptUser("Enter description, terminated with single '.' or EOF:\n", interactive);

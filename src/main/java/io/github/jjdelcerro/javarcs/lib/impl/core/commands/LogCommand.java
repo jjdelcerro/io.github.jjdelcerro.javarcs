@@ -1,13 +1,13 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.commands;
 
+import io.github.jjdelcerro.javarcs.lib.RCSAccessEntry;
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
+import io.github.jjdelcerro.javarcs.lib.RCSDelta;
+import io.github.jjdelcerro.javarcs.lib.RCSLockEntry;
 import io.github.jjdelcerro.javarcs.lib.commands.LogOptions;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSAccessEntry;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSDelta;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileFlag;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSLockEntry;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSSymbolEntry;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSSymbolEntryImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSFileUtils;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSParser;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSTimeUtils;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * Implementa el comando 'rlog'. Muestra el historial completo de revisiones,
  * metadatos del archivo y mensajes de log.
  */
+@SuppressWarnings("UseSpecificCatch")
 public class LogCommand implements RCSCommand<LogOptions> {
 
   private static final String REV_SEP = "----------------------------";
@@ -38,7 +39,7 @@ public class LogCommand implements RCSCommand<LogOptions> {
         throw new RCSException("No se encontró el archivo RCS para: " + workFilePath);
       }
 
-      RCSFile rcsFile = new RCSParser().parse(rcsPathOpt.get());
+      RCSFileImpl rcsFile = new RCSParser().parse(rcsPathOpt.get());
 
       // 2. Imprimir cabeceras administrativas (solo si no es modo quiet)
       if (!options.isQuiet()) {
@@ -70,7 +71,7 @@ public class LogCommand implements RCSCommand<LogOptions> {
   /**
    * Imprime la sección de metadatos del archivo RCS.
    */
-  private void printHeader(RCSFile rcsFile, Path workFilePath) {
+  private void printHeader(RCSFileImpl rcsFile, Path workFilePath) {
     System.out.println("RCS file: " + rcsFile.getFilePath());
     System.out.println("Working file: " + workFilePath.getFileName());
 
@@ -106,7 +107,7 @@ public class LogCommand implements RCSCommand<LogOptions> {
     System.out.println();
 
     System.out.println("symbolic names:");
-    for (RCSSymbolEntry symbol : rcsFile.getSymbolicNames()) {
+    for (RCSSymbolEntryImpl symbol : rcsFile.getSymbolicNames()) {
       System.out.println("\t" + symbol.getName() + ": " + symbol.getRevisionNumber());
     }
 

@@ -6,13 +6,13 @@ import java.util.Objects;
  * Representa una entrada de rama en un delta de RCS.
  */
 public class RCSBranchEntry {
-    private final RCSRevisionNumber branchNumber;
+    private final RCSRevisionNumberImpl branchNumber;
 
-    public RCSBranchEntry(RCSRevisionNumber branchNumber) {
+    public RCSBranchEntry(RCSRevisionNumberImpl branchNumber) {
         this.branchNumber = Objects.requireNonNull(branchNumber, "Branch number cannot be null");
     }
 
-    public RCSRevisionNumber getBranchNumber() {
+    public RCSRevisionNumberImpl getBranchNumber() {
         return branchNumber;
     }
 

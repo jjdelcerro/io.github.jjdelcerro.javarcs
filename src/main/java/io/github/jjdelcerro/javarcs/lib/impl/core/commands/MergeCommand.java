@@ -2,8 +2,8 @@ package io.github.jjdelcerro.javarcs.lib.impl.core.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommand;
 import io.github.jjdelcerro.javarcs.lib.commands.MergeOptions;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFile;
-import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumber;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSFileImpl;
+import io.github.jjdelcerro.javarcs.lib.impl.core.model.RCSRevisionNumberImpl;
 import io.github.jjdelcerro.javarcs.lib.impl.core.temp.TemporaryFileManager;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSDeltaProcessor;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSFileUtils;
@@ -31,7 +31,7 @@ public class MergeCommand implements RCSCommand<MergeOptions> {
     public void execute(MergeOptions options) throws RCSException {
         Path workFilePath = options.getWorkFilePath();
         Path rcsFilePath;
-        RCSFile rcsFile;
+        RCSFileImpl rcsFile;
 
         try {
             // 1. Encontrar y parsear el archivo RCS
@@ -44,11 +44,11 @@ public class MergeCommand implements RCSCommand<MergeOptions> {
             rcsFile = parser.parse(rcsFilePath);
 
             // 2. Determinar las revisiones
-            RCSRevisionNumber baseRevisionNumber = RCSRevisionNumber.parse(options.getBaseRevision());
-            RCSRevisionNumber compareRevisionNumber;
+            RCSRevisionNumberImpl baseRevisionNumber = RCSRevisionNumberImpl.parse(options.getBaseRevision());
+            RCSRevisionNumberImpl compareRevisionNumber;
 
             if (options.getCompareRevision() != null && !options.getCompareRevision().isEmpty()) {
-                compareRevisionNumber = RCSRevisionNumber.parse(options.getCompareRevision());
+                compareRevisionNumber = RCSRevisionNumberImpl.parse(options.getCompareRevision());
             } else {
                 // Si no se especifica compareRevision, se usa la HEAD
                 compareRevisionNumber = rcsFile.getHead();

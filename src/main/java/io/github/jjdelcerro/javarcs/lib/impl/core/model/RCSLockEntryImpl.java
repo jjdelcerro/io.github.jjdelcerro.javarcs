@@ -1,24 +1,27 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.model;
 
+import io.github.jjdelcerro.javarcs.lib.RCSLockEntry;
 import java.util.Objects;
 
 /**
  * Representa una entrada de bloqueo en un archivo RCS.
  */
-public class RCSLockEntry {
+public class RCSLockEntryImpl implements RCSLockEntry {
     private final String username;
-    private final RCSRevisionNumber revisionNumber;
+    private final RCSRevisionNumberImpl revisionNumber;
 
-    public RCSLockEntry(String username, RCSRevisionNumber revisionNumber) {
+    public RCSLockEntryImpl(String username, RCSRevisionNumberImpl revisionNumber) {
         this.username = Objects.requireNonNull(username, "Username cannot be null");
         this.revisionNumber = Objects.requireNonNull(revisionNumber, "Revision number cannot be null");
     }
 
+  @Override
     public String getUsername() {
         return username;
     }
 
-    public RCSRevisionNumber getRevisionNumber() {
+  @Override
+    public RCSRevisionNumberImpl getRevisionNumber() {
         return revisionNumber;
     }
 
@@ -26,7 +29,7 @@ public class RCSLockEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RCSLockEntry that = (RCSLockEntry) o;
+        RCSLockEntryImpl that = (RCSLockEntryImpl) o;
         return Objects.equals(username, that.username) && Objects.equals(revisionNumber, that.revisionNumber);
     }
 

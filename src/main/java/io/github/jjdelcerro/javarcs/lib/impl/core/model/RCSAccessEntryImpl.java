@@ -1,17 +1,19 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.model;
 
+import io.github.jjdelcerro.javarcs.lib.RCSAccessEntry;
 import java.util.Objects;
 
 /**
  * Representa una entrada de acceso en un archivo RCS.
  */
-public class RCSAccessEntry {
+public class RCSAccessEntryImpl implements RCSAccessEntry {
     private final String username;
 
-    public RCSAccessEntry(String username) {
+    public RCSAccessEntryImpl(String username) {
         this.username = Objects.requireNonNull(username, "Username cannot be null");
     }
 
+  @Override
     public String getUsername() {
         return username;
     }
@@ -20,7 +22,7 @@ public class RCSAccessEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RCSAccessEntry that = (RCSAccessEntry) o;
+        RCSAccessEntryImpl that = (RCSAccessEntryImpl) o;
         return Objects.equals(username, that.username);
     }
 

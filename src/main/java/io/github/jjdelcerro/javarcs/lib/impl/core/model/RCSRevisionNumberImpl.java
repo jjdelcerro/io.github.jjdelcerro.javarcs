@@ -1,5 +1,6 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.model;
 
+import io.github.jjdelcerro.javarcs.lib.RCSRevisionNumber;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
 
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
  * Representa un número de revisión de RCS (e.g., "1.1", "1.1.2.1").
  * Esta clase es inmutable.
  */
-public class RCSRevisionNumber {
+public class RCSRevisionNumberImpl implements RCSRevisionNumber {
 
     // Constantes adaptadas de rcs.h y rcsnum.c
     public static final int RCSNUM_MAXLEN = 64;
@@ -30,7 +31,7 @@ public class RCSRevisionNumber {
      * @param ids Un array de shorts que representan los componentes del número de revisión.
      * @param length La longitud lógica del número de revisión (número de componentes).
      */
-    private RCSRevisionNumber(short[] ids, int length) {
+    private RCSRevisionNumberImpl(short[] ids, int length) {
         this.ids = Arrays.copyOf(ids, length);
         this.length = length;
     }
@@ -42,7 +43,7 @@ public class RCSRevisionNumber {
      * @return Una nueva instancia de RCSRevisionNumber.
      * @throws IllegalArgumentException Si la cadena no es un número de revisión válido.
      */
-    public static RCSRevisionNumber parse(String str) {
+    public static RCSRevisionNumberImpl parse(String str) {
         if (str == null || str.trim().isEmpty()) {
             throw new IllegalArgumentException("La cadena de revisión no puede ser nula o vacía.");
         }
@@ -85,7 +86,7 @@ public class RCSRevisionNumber {
             ids = newIds; // Usar el array más corto
         }
         
-        return new RCSRevisionNumber(ids, ids.length);
+        return new RCSRevisionNumberImpl(ids, ids.length);
     }
 
     /**
@@ -95,13 +96,13 @@ public class RCSRevisionNumber {
      * @param depth La profundidad máxima a copiar. Si es 0, copia la longitud completa.
      * @return Una nueva instancia de RCSRevisionNumber que es una copia (parcial) del original.
      */
-    public static RCSRevisionNumber copy(RCSRevisionNumber source, int depth) {
+    public static RCSRevisionNumberImpl copy(RCSRevisionNumberImpl source, int depth) {
         int len = source.length;
         if (depth != 0 && len > depth) {
             len = depth;
         }
         short[] newIds = Arrays.copyOf(source.ids, len);
-        return new RCSRevisionNumber(newIds, len);
+        return new RCSRevisionNumberImpl(newIds, len);
     }
 
     /**
@@ -112,9 +113,11 @@ public class RCSRevisionNumber {
      * @return 0 si son iguales, -1 si este número es "mayor" que el otro, 1 si este número es "menor" que el otro.
      * (Siguiendo la convención de `rcsnum_cmp` donde -1 significa mayor y 1 significa menor, lo cual es invertido respecto a `compareTo`).
      */
+    @Override
     public int compareTo(RCSRevisionNumber other, int depth) {
+        RCSRevisionNumberImpl theOther = (RCSRevisionNumberImpl) other;
         int len1 = this.length;
-        int len2 = other.length;
+        int len2 = theOther.length;
 
         int limit = Math.min(len1, len2);
         if (depth != 0 && limit > depth) {
@@ -122,7 +125,7 @@ public class RCSRevisionNumber {
         }
 
         for (int i = 0; i < limit; i++) {
-            int diff = this.ids[i] - other.ids[i];
+            int diff = this.ids[i] - theOther.ids[i];
             if (diff < 0) return 1;  // this.ids[i] es menor, por lo tanto, "menor" en la convención de RCS
             if (diff > 0) return -1; // this.ids[i] es mayor, por lo tanto, "mayor" en la convención de RCS
         }
@@ -144,7 +147,7 @@ public class RCSRevisionNumber {
      * @return Una nueva instancia de RCSRevisionNumber con el último componente incrementado.
      * @throws RCSException Si el último componente ya es el valor máximo permitido.
      */
-    public RCSRevisionNumber increment() {
+    public RCSRevisionNumberImpl increment() {
         if (length == 0) {
             throw new RCSException("No se puede incrementar un número de revisión vacío.");
         }
@@ -154,12 +157,13 @@ public class RCSRevisionNumber {
         }
         short[] newIds = Arrays.copyOf(ids, length);
         newIds[length - 1]++;
-        return new RCSRevisionNumber(newIds, length);
+        return new RCSRevisionNumberImpl(newIds, length);
     }
 
     /**
      * Devuelve la longitud del número de revisión (número de componentes).
      */
+  @Override
     public int getLength() {
         return length;
     }
@@ -167,6 +171,7 @@ public class RCSRevisionNumber {
     /**
      * Devuelve una copia de los componentes del número de revisión.
      */
+  @Override
     public short[] getIds() {
         return Arrays.copyOf(ids, length);
     }
@@ -174,6 +179,7 @@ public class RCSRevisionNumber {
     /**
      * Verifica si este número de revisión representa una rama (longitud impar de componentes).
      */
+  @Override
     public boolean isBranch() {
         return length % 2 != 0;
     }
@@ -181,6 +187,7 @@ public class RCSRevisionNumber {
     /**
      * Verifica si este número de revisión es una revisión de rama (longitud par y al menos 4 componentes).
      */
+  @Override
     public boolean isBranchRevision() {
         return length % 2 == 0 && length >= 4;
     }
@@ -191,16 +198,16 @@ public class RCSRevisionNumber {
      *
      * @return Una nueva instancia de RCSRevisionNumber que representa la rama, o null si no es una revisión de rama válida.
      */
-    public RCSRevisionNumber convertToBranch() {
+    public RCSRevisionNumberImpl convertToBranch() {
         if (length < 2) {
             return null;
         }
         // Si ya es una rama, devolver una copia
         if (isBranch()) {
-            return RCSRevisionNumber.copy(this, 0);
+            return RCSRevisionNumberImpl.copy(this, 0);
         }
         // Si es una revisión de una rama, truncar el último componente
-        return new RCSRevisionNumber(Arrays.copyOf(ids, length - 1), length - 1);
+        return new RCSRevisionNumberImpl(Arrays.copyOf(ids, length - 1), length - 1);
     }
 
     /**
@@ -210,13 +217,13 @@ public class RCSRevisionNumber {
      * @return Una nueva instancia de RCSRevisionNumber que representa la revisión inicial de la rama.
      * @throws IllegalArgumentException Si no es un número de rama válido.
      */
-    public RCSRevisionNumber convertToRevision() {
+    public RCSRevisionNumberImpl convertToRevision() {
         if (!isBranch()) {
             throw new IllegalArgumentException("No es un número de rama válido para convertir a revisión.");
         }
         short[] newIds = Arrays.copyOf(ids, length + 1);
         newIds[length] = 1; // La revisión inicial de una rama es .1
-        return new RCSRevisionNumber(newIds, length + 1);
+        return new RCSRevisionNumberImpl(newIds, length + 1);
     }
     
     /**
@@ -225,7 +232,7 @@ public class RCSRevisionNumber {
      *
      * @return Una nueva instancia de RCSRevisionNumber con el número mágico.
      */
-    public RCSRevisionNumber addMagicBranchNumber() {
+    public RCSRevisionNumberImpl addMagicBranchNumber() {
         if (length == 0 || length >= RCSNUM_MAXLEN) {
             throw new RCSException("No se puede añadir número mágico a una revisión con longitud 0 o máxima.");
         }
@@ -233,7 +240,7 @@ public class RCSRevisionNumber {
         System.arraycopy(ids, 0, newIds, 0, length - 1); // Copia hasta el penúltimo
         newIds[length - 1] = 0; // Inserta el 0 mágico
         newIds[length] = ids[length - 1]; // Mueve el último a la nueva posición
-        return new RCSRevisionNumber(newIds, length + 1);
+        return new RCSRevisionNumberImpl(newIds, length + 1);
     }
 
     @Override
@@ -252,7 +259,7 @@ public class RCSRevisionNumber {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RCSRevisionNumber that = (RCSRevisionNumber) o;
+        RCSRevisionNumberImpl that = (RCSRevisionNumberImpl) o;
         return length == that.length && Arrays.equals(ids, that.ids);
     }
 

@@ -1,7 +1,9 @@
 package io.github.jjdelcerro.javarcs.lib.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommandOptions;
+import io.github.jjdelcerro.javarcs.lib.RCSDelta;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ public interface LogOptions extends RCSCommandOptions {
   boolean isIsoTimeFormat();
 
   boolean isQuiet();
-
+  
   LogOptions setAuthors(List<String> authors);
 
   LogOptions setDates(List<String> dates);
@@ -42,6 +44,5 @@ public interface LogOptions extends RCSCommandOptions {
 
   LogOptions setRevisions(List<String> revisions);
 
-  LogOptions setStates(List<String> states);
-  
+  LogOptions setStates(List<String> states);  
 }

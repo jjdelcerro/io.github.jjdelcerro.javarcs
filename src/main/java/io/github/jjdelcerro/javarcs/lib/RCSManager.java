@@ -35,4 +35,6 @@ public interface RCSManager {
   public MergeOptions createMergeOptions(Path workFilePath, String baseRevision);
 
   public RCSCommand create(RCSCommandOptions options);
+  
+  public RCSFile getRCSFile(Path workFilePath);
 }

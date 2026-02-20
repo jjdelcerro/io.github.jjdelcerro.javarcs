@@ -1,5 +1,9 @@
 package io.github.jjdelcerro.javarcs.lib.impl.core.model;
 
+import io.github.jjdelcerro.javarcs.lib.RCSAccessEntry;
+import io.github.jjdelcerro.javarcs.lib.RCSDelta;
+import io.github.jjdelcerro.javarcs.lib.RCSFile;
+import io.github.jjdelcerro.javarcs.lib.RCSLockEntry;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -11,19 +15,19 @@ import java.util.Set;
  * Representa la estructura completa de un archivo RCS (.v). Incluye la sección
  * de administración, el árbol de deltas y la descripción.
  */
-public class RCSFile {
+public class RCSFileImpl implements RCSFile {
 
   private final Path filePath;
-  private RCSRevisionNumber head;
-  private RCSRevisionNumber branch;
+  private RCSRevisionNumberImpl head;
+  private RCSRevisionNumberImpl branch;
   private String comment;
   private String expandKeywords; // Importante para detectar modo binario ("b")
   private String description;
 
-  private final List<RCSAccessEntry> accessEntries;
-  private final List<RCSSymbolEntry> symbolicNames;
-  private final List<RCSLockEntry> locks;
-  private final List<RCSDelta> deltas;
+  private final List<RCSAccessEntryImpl> accessEntries;
+  private final List<RCSSymbolEntryImpl> symbolicNames;
+  private final List<RCSLockEntryImpl> locks;
+  private final List<RCSDeltaImpl> deltas;
 
   private final Set<RCSFileFlag> flags;
 
@@ -32,7 +36,7 @@ public class RCSFile {
    *
    * @param filePath Ruta al archivo físico (.v).
    */
-  public RCSFile(Path filePath) {
+  public RCSFileImpl(Path filePath) {
     this.filePath = Objects.requireNonNull(filePath, "La ruta del archivo no puede ser nula");
     this.accessEntries = new ArrayList<>();
     this.symbolicNames = new ArrayList<>();
@@ -44,6 +48,7 @@ public class RCSFile {
   }
 
   // --- Métodos de Estado y Flags ---
+  @Override
   public boolean isBinary() {
     return "b".equals(expandKeywords);
   }
@@ -68,28 +73,32 @@ public class RCSFile {
   }
 
   // --- Getters y Setters con gestión de estado ---
+  @Override
   public Path getFilePath() {
     return filePath;
   }
 
-  public RCSRevisionNumber getHead() {
+  @Override
+  public RCSRevisionNumberImpl getHead() {
     return head;
   }
 
-  public void setHead(RCSRevisionNumber head) {
+  public void setHead(RCSRevisionNumberImpl head) {
     this.head = head;
     markAsModified();
   }
 
-  public RCSRevisionNumber getBranch() {
+  @Override
+  public RCSRevisionNumberImpl getBranch() {
     return branch;
   }
 
-  public void setBranch(RCSRevisionNumber branch) {
+  public void setBranch(RCSRevisionNumberImpl branch) {
     this.branch = branch;
     markAsModified();
   }
 
+  @Override
   public String getComment() {
     return comment;
   }
@@ -99,6 +108,7 @@ public class RCSFile {
     markAsModified();
   }
 
+  @Override
   public String getExpandKeywords() {
     return expandKeywords;
   }
@@ -108,6 +118,7 @@ public class RCSFile {
     markAsModified();
   }
 
+  @Override
   public String getDescription() {
     return description;
   }
@@ -118,42 +129,46 @@ public class RCSFile {
   }
 
   // --- Gestión de Listas de Metadatos ---
+  @Override
   public List<RCSAccessEntry> getAccessEntries() {
-    return accessEntries;
+    return (List)accessEntries;
   }
 
-  public void addAccessEntry(RCSAccessEntry entry) {
+  public void addAccessEntry(RCSAccessEntryImpl entry) {
     this.accessEntries.add(entry);
     markAsModified();
   }
 
-  public List<RCSSymbolEntry> getSymbolicNames() {
+  @Override
+  public List<RCSSymbolEntryImpl> getSymbolicNames() {
     return symbolicNames;
   }
 
-  public void addSymbolicName(RCSSymbolEntry entry) {
+  public void addSymbolicName(RCSSymbolEntryImpl entry) {
     this.symbolicNames.add(entry);
     markAsModified();
   }
 
+  @Override
   public List<RCSLockEntry> getLocks() {
-    return locks;
+    return (List)locks;
   }
 
-  public void addLock(RCSLockEntry entry) {
+  public void addLock(RCSLockEntryImpl entry) {
     this.locks.add(entry);
     markAsModified();
   }
 
+  @Override
   public List<RCSDelta> getDeltas() {
-    return deltas;
+    return (List)deltas;
   }
 
   /**
    * Añade un nuevo delta al archivo. En un archivo RCS bien formado, los deltas
    * se almacenan de más reciente a más antiguo.
    */
-  public void addDelta(RCSDelta delta) {
+  public void addDelta(RCSDeltaImpl delta) {
     this.deltas.add(delta);
     markAsModified();
   }
@@ -165,7 +180,7 @@ public class RCSFile {
    * @param revisionNumber Número de revisión (ej. "1.1").
    * @return El RCSDelta correspondiente o null si no existe.
    */
-  public RCSDelta findDelta(RCSRevisionNumber revisionNumber) {
+  public RCSDeltaImpl findDelta(RCSRevisionNumberImpl revisionNumber) {
     if (revisionNumber == null) {
       return null;
     }
@@ -181,10 +196,10 @@ public class RCSFile {
    * @param symbolName El nombre del símbolo (ej. "RELEASE_1_0").
    * @return El número de revisión o null si el símbolo no existe.
    */
-  public RCSRevisionNumber findRevisionBySymbol(String symbolName) {
+  public RCSRevisionNumberImpl findRevisionBySymbol(String symbolName) {
     return symbolicNames.stream()
             .filter(s -> s.getName().equals(symbolName))
-            .map(RCSSymbolEntry::getRevisionNumber)
+            .map(RCSSymbolEntryImpl::getRevisionNumber)
             .findFirst()
             .orElse(null);
   }
