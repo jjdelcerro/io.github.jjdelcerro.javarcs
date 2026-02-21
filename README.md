@@ -91,17 +91,17 @@ Fusiona cambios entre dos revisiones en el archivo de trabajo (3-way merge).
 *   `-p`: Envía el resultado a la salida estándar en lugar de sobrescribir el archivo.
 *   `-q`: Modo silencioso.
 
-## Motivación: JavaRCS y la IA
+## Motivación y contexto: JavaRCS en la Arquitectura de Agentes
 
-Este proyecto nace de una necesidad específica en el desarrollo de **[ChatAgent](https://github.com/jjdelcerro/chatagent)**, un agente autónomo experimental capaz de modificar ficheros de texto y mantener memoria a largo plazo.
+> *"¿Por qué alguien reescribiría RCS en Java en 2024 habiendo Git?"*
 
-Para que un Agente de IA pueda modificar ficheros de texto (documentacion o código) de forma segura, necesita un mecanismo de "seguridad" que cumpla tres requisitos:
+Este proyecto nació como una necesidad arquitectónica para **[ChatAgent](https://github.com/jjdelcerro/io.github.jjdelcerro.chatagent)**, un agente experimental enfocado principalmente en la gestión de memoria a largo plazo y la colaboración en tareas de reflexión y escritura.
 
-1.  **Atomicidad por Archivo:** El agente trabaja archivo a archivo, no con repositorios enteros.
-2.  **Portabilidad Total:** El agente debe poder ejecutarse en cualquier JVM sin depender de herramientas instaladas en el sistema operativo anfitrión (`git`, `diff`, `patch` nativos).
-3.  **Lenguaje Común (Unified Diff):** La decisión de desviar el formato interno de almacenamiento de RCS (usando *Unified Diffs* en lugar de scripts `ed`) es intencional. Los LLMs (GPT, Claude, Llama) entienden y generan *Unified Diffs* de forma nativa y robusta, mientras que tienen dificultades con las instrucciones posicionales de `ed`.
+Para dotar a un agente de **agencia real** sobre el sistema de archivos (capacidad de crear, editar y evolucionar documentos, notas o código), es imprescindible un mecanismo de seguridad: una "red de protección" ante errores o alucinaciones.
 
-JavaRCS actúa como el la red de seguridad para el agente. Antes de  aplicar un parche o escribir un fichero existente, el agente, de forma automatica, guarda una instantánea ligera (`ci`), permitiendo un `rollback` inmediato si la alucinación hace estragos.
+**JavaRCS** resuelve esto actuando como una **librería de control de versiones embebida y atómica**.
+
+A diferencia de otros mecanismos de control de versiones que gestionan repositorios complejos, JavaRCS permite instrumentar herramientas deterministas sobre archivos individuales de forma simple. Esto permite que el Agente modifique archivos o colabore en la redacción de documentos con la garantía de que siempre existe un **historial inmutable y recuperable**, sin depender de herramientas externas instaladas en el sistema operativo.
 
 ## Stack Tecnológico
 

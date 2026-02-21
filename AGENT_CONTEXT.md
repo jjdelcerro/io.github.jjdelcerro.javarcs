@@ -13,6 +13,14 @@ La diferencia arquitectónica más significativa respecto al RCS original (GNU R
 *   **RCS Original:** Utiliza scripts de edición (`ed`) para almacenar las diferencias.
 *   **JavaRCS:** Utiliza el formato **Unified Diff**. Esto moderniza el motor de diferencias, haciéndolo más robusto y legible, aunque sacrifica la compatibilidad binaria estricta con los archivos `,v` generados por el comando `ci` original de GNU (aunque la estructura de metadatos y cabeceras se mantiene idéntica).
 
+### 1.1. Contexto de Uso y Restricciones Arquitectónicas
+
+Este sistema está diseñado para ser utilizado como **subsistema de memoria y seguridad** embebido dentro de agentes autónomos de IA (ej. `ChatAgent`). Esto impone restricciones estrictas de diseño que diferencian a JavaRCS de otras herramientas de control de versiones:
+
+1.  **Atomicidad y Aislamiento:** El sistema debe operar sobre archivos individuales sin asumir la existencia de un repositorio global o estructura de proyecto.
+2.  **Portabilidad "Pure Java":** Está prohibido el uso de dependencias nativas (JNI) o invocaciones al sistema operativo (`Runtime.exec("diff")`). Todo el cálculo de diferencias y parches debe ocurrir dentro de la JVM para garantizar la ejecución en entornos restringidos.
+3.  **Determinismo:** Las operaciones deben ser predecibles y seguras, actuando como mecanismo de "deshacer/revertir" fiable para procesos automatizados.
+
 ## 2. Stack Tecnológico
 
 El proyecto apuesta por un stack minimalista y estándar, priorizando la portabilidad y la mantenibilidad.
