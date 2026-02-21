@@ -27,20 +27,6 @@ Es ideal para:
 ### ¿Cómo funciona?
 Por cada archivo que quieras controlar (ej. `script.sh`), JavaRCS crea un archivo "sombra" (ej. `script.sh,jv`) donde almacena todo el historial, autores, fechas y comentarios.
 
-
-## Stack Tecnológico
-
-El proyecto está construido con tecnologías estándar y modernas:
-
-*   **Lenguaje:** Java 21 (OpenJDK).
-*   **Gestión de Construcción:** Apache Maven.
-*   **Librerías Principales:**
-    *   `java-diff-utils` (4.12): Para la generación de parches y algoritmos de diferencias (Myers).
-    *   `commons-cli` (1.6.0): Para el parseo robusto de argumentos de línea de comandos.
-*   **Sin dependencias nativas:** Funciona en Linux, Windows y macOS sin recompilar.
-
----
-
 ## Comandos Disponibles
 
 El uso general es:
@@ -104,6 +90,29 @@ Fusiona cambios entre dos revisiones en el archivo de trabajo (3-way merge).
 *   `-L <label>`: Etiquetas para los marcadores de conflicto (puedes usarlo varias veces).
 *   `-p`: Envía el resultado a la salida estándar en lugar de sobrescribir el archivo.
 *   `-q`: Modo silencioso.
+
+## Motivación: JavaRCS y la IA
+
+Este proyecto nace de una necesidad específica en el desarrollo de **[ChatAgent](https://github.com/jjdelcerro/chatagent)**, un agente autónomo experimental capaz de modificar ficheros de texto y mantener memoria a largo plazo.
+
+Para que un Agente de IA pueda modificar ficheros de texto (documentacion o código) de forma segura, necesita un mecanismo de "seguridad" que cumpla tres requisitos:
+
+1.  **Atomicidad por Archivo:** El agente trabaja archivo a archivo, no con repositorios enteros.
+2.  **Portabilidad Total:** El agente debe poder ejecutarse en cualquier JVM sin depender de herramientas instaladas en el sistema operativo anfitrión (`git`, `diff`, `patch` nativos).
+3.  **Lenguaje Común (Unified Diff):** La decisión de desviar el formato interno de almacenamiento de RCS (usando *Unified Diffs* en lugar de scripts `ed`) es intencional. Los LLMs (GPT, Claude, Llama) entienden y generan *Unified Diffs* de forma nativa y robusta, mientras que tienen dificultades con las instrucciones posicionales de `ed`.
+
+JavaRCS actúa como el la red de seguridad para el agente. Antes de  aplicar un parche o escribir un fichero existente, el agente, de forma automatica, guarda una instantánea ligera (`ci`), permitiendo un `rollback` inmediato si la alucinación hace estragos.
+
+## Stack Tecnológico
+
+El proyecto está construido con tecnologías estándar y modernas:
+
+*   **Lenguaje:** Java 21 (OpenJDK).
+*   **Gestión de Construcción:** Apache Maven.
+*   **Librerías Principales:**
+    *   `java-diff-utils` (4.12): Para la generación de parches y algoritmos de diferencias (Myers).
+    *   `commons-cli` (1.6.0): Para el parseo robusto de argumentos de línea de comandos.
+*   **Sin dependencias nativas:** Funciona en Linux, Windows y macOS sin recompilar.
 
 ## Documentación y Arquitectura
 
