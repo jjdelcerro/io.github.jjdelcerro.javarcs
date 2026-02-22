@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import io.github.jjdelcerro.javarcs.lib.commands.LogOptions;
+import java.io.PrintStream;
 
 /**
  * Clase que encapsula las opciones para el comando `rlog`. Adaptado de las
@@ -12,7 +13,7 @@ import io.github.jjdelcerro.javarcs.lib.commands.LogOptions;
  */
 public class LogOptionsImpl implements LogOptions {
 
-  private Path workFilePath;
+  private final Path workFilePath;
   private List<String> revisions; // -r flag
   private List<String> dates; // -d flag
   private List<String> authors; // -w flag
@@ -21,6 +22,7 @@ public class LogOptionsImpl implements LogOptions {
   private boolean descriptionOnly; // -t flag
   private boolean quiet; // -q flag
   private boolean isoTimeFormat; // -z flag (implica formato ISO en rlog)
+  private PrintStream out;
 
   public LogOptionsImpl(Path workFilePath) {
     this.workFilePath = Objects.requireNonNull(workFilePath, "Work file path cannot be null");
@@ -122,5 +124,15 @@ public class LogOptionsImpl implements LogOptions {
   public LogOptionsImpl setIsoTimeFormat(boolean isoTimeFormat) {
     this.isoTimeFormat = isoTimeFormat;
     return this;
+  }
+
+  @Override
+  public void setOutputStream(PrintStream out) {
+    this.out = out;
+  }
+
+  @Override
+  public PrintStream getOutputStream() {
+    return this.out;
   }
 }

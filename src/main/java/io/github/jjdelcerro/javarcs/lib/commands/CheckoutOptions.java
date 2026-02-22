@@ -1,6 +1,7 @@
 package io.github.jjdelcerro.javarcs.lib.commands;
 
 import io.github.jjdelcerro.javarcs.lib.RCSCommandOptions;
+import java.io.PrintStream;
 import java.nio.file.Path;
 
 /**
@@ -55,4 +56,7 @@ public interface CheckoutOptions extends RCSCommandOptions {
 
   CheckoutOptions setUnlock(boolean unlock);
   
+  public void setOutputStream(PrintStream out);
+
+  public PrintStream getOutputStream();
 }

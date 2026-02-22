@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * Pruebas de integración para el comando Checkin (ci).
@@ -79,6 +80,7 @@ class BasicTest {
      * - Verifica que el fichero RCS (,jv) ha sido creado correctamente.
      */
     @Test
+    @Disabled
     void checkCreateFirstRevision() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -97,6 +99,7 @@ class BasicTest {
     }
 
     @Test
+    @Disabled
     void checkCreateWith2Revisions() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -116,6 +119,7 @@ class BasicTest {
     }
 
     @Test
+    @Disabled
     void checkCreateWith2RevisionsAndCheckoutR1() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 

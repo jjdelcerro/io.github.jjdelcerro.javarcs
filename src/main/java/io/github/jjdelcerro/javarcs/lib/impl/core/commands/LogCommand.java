@@ -12,6 +12,7 @@ import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSFileUtils;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSParser;
 import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSTimeUtils;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
+import java.io.PrintStream;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -27,9 +28,11 @@ public class LogCommand implements RCSCommand<LogOptions> {
 
   private static final String REV_SEP = "----------------------------";
   private static final String FILE_END = "=============================================================================";
+  private LogOptions options;
 
   @Override
   public void execute(LogOptions options) throws RCSException {
+    this.options = options;
     Path workFilePath = options.getWorkFilePath();
 
     try {
@@ -60,7 +63,7 @@ public class LogCommand implements RCSCommand<LogOptions> {
       }
 
       if (!options.isQuiet()) {
-        System.out.println(FILE_END);
+        this.getOutput().println(FILE_END);
       }
 
     } catch (Exception e) {
@@ -68,55 +71,62 @@ public class LogCommand implements RCSCommand<LogOptions> {
     }
   }
 
+  private PrintStream getOutput() {
+    PrintStream out = this.options.getOutputStream();
+    if( out == null ) {
+      return System.out;
+    }
+    return out;
+  }
   /**
    * Imprime la sección de metadatos del archivo RCS.
    */
   private void printHeader(RCSFileImpl rcsFile, Path workFilePath) {
-    System.out.println("RCS file: " + rcsFile.getFilePath());
-    System.out.println("Working file: " + workFilePath.getFileName());
+    this.getOutput().println("RCS file: " + rcsFile.getFilePath());
+    this.getOutput().println("Working file: " + workFilePath.getFileName());
 
-    System.out.print("head:");
+    this.getOutput().print("head:");
     if (rcsFile.getHead() != null) {
-      System.out.print(" " + rcsFile.getHead());
+      this.getOutput().print(" " + rcsFile.getHead());
     }
-    System.out.println();
+    this.getOutput().println();
 
-    System.out.print("branch:");
+    this.getOutput().print("branch:");
     if (rcsFile.getBranch() != null) {
-      System.out.print(" " + rcsFile.getBranch());
+      this.getOutput().print(" " + rcsFile.getBranch());
     }
-    System.out.println();
+    this.getOutput().println();
 
-    System.out.print("locks: ");
+    this.getOutput().print("locks: ");
     if (rcsFile.hasFlag(RCSFileFlag.STRICT_LOCK)) {
-      System.out.print("strict");
+      this.getOutput().print("strict");
     }
     for (RCSLockEntry lock : rcsFile.getLocks()) {
-      System.out.print("\n\t" + lock.getUsername() + ": " + lock.getRevisionNumber());
+      this.getOutput().print("\n\t" + lock.getUsername() + ": " + lock.getRevisionNumber());
     }
-    System.out.println();
+    this.getOutput().println();
 
-    System.out.print("access list:");
+    this.getOutput().print("access list:");
     if (rcsFile.getAccessEntries().isEmpty()) {
-      System.out.print(" (empty)");
+      this.getOutput().print(" (empty)");
     } else {
       for (RCSAccessEntry access : rcsFile.getAccessEntries()) {
-        System.out.print("\n\t" + access.getUsername());
+        this.getOutput().print("\n\t" + access.getUsername());
       }
     }
-    System.out.println();
+    this.getOutput().println();
 
-    System.out.println("symbolic names:");
+    this.getOutput().println("symbolic names:");
     for (RCSSymbolEntry symbol : rcsFile.getSymbolicNames()) {
-      System.out.println("\t" + symbol.getName() + ": " + symbol.getRevisionNumber());
+      this.getOutput().println("\t" + symbol.getName() + ": " + symbol.getRevisionNumber());
     }
 
-    System.out.println("keyword substitution: " + (rcsFile.getExpandKeywords() != null ? rcsFile.getExpandKeywords() : "kv"));
-    System.out.println("total revisions: " + rcsFile.getDeltas().size());
+    this.getOutput().println("keyword substitution: " + (rcsFile.getExpandKeywords() != null ? rcsFile.getExpandKeywords() : "kv"));
+    this.getOutput().println("total revisions: " + rcsFile.getDeltas().size());
 
     if (rcsFile.getDescription() != null && !rcsFile.getDescription().isEmpty()) {
-      System.out.println("description:");
-      System.out.println(rcsFile.getDescription());
+      this.getOutput().println("description:");
+      this.getOutput().println(rcsFile.getDescription());
     }
   }
 
@@ -124,19 +134,19 @@ public class LogCommand implements RCSCommand<LogOptions> {
    * Imprime la información de una revisión específica.
    */
   private void printDelta(RCSDelta delta, LogOptions options) {
-    System.out.println(REV_SEP);
-    System.out.println("revision " + delta.getRevisionNumber());
+    this.getOutput().println(REV_SEP);
+    this.getOutput().println("revision " + delta.getRevisionNumber());
 
     String dateStr = RCSTimeUtils.formatTime(delta.getDate(), options.isIsoTimeFormat(), null);
-    System.out.print("date: " + dateStr + ";  author: " + delta.getAuthor() + ";  state: " + delta.getState() + ";");
+    this.getOutput().print("date: " + dateStr + ";  author: " + delta.getAuthor() + ";  state: " + delta.getState() + ";");
 
     if (delta.getCommitId() != null) {
-      System.out.print("  commitid: " + delta.getCommitId() + ";");
+      this.getOutput().print("  commitid: " + delta.getCommitId() + ";");
     }
-    System.out.println();
+    this.getOutput().println();
 
     if (delta.getLogMessage() != null) {
-      System.out.println(delta.getLogMessage());
+      this.getOutput().println(delta.getLogMessage());
     }
   }
 

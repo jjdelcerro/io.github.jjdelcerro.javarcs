@@ -12,6 +12,7 @@ import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSParser;
 import io.github.jjdelcerro.javarcs.lib.impl.exceptions.RCSException;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -23,8 +24,11 @@ import java.util.Optional;
  */
 public class CheckoutCommand implements RCSCommand<CheckoutOptions> {
 
+  private CheckoutOptions options;
+
   @Override
   public void execute(CheckoutOptions options) throws RCSException {
+    this.options = options;
     Path workFilePath = options.getWorkFilePath();
 
     try {
@@ -62,11 +66,18 @@ public class CheckoutCommand implements RCSCommand<CheckoutOptions> {
           }
         }
         Files.write(workFilePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        System.out.println("Revision " + revToGet + " extraída correctamente.");
+        this.getOutput().println("Revision " + revToGet + " extraída correctamente.");
       }
 
     } catch (IOException e) {
       throw new RCSException("Error en checkout: " + e.getMessage(), e);
     }
+  }
+  private PrintStream getOutput() {
+    PrintStream out = this.options.getOutputStream();
+    if( out == null ) {
+      return System.out;
+    }
+    return out;
   }
 }

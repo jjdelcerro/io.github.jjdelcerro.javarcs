@@ -5,6 +5,7 @@ import io.github.jjdelcerro.javarcs.lib.impl.core.util.RCSKeywordExpander;
 import java.nio.file.Path;
 import java.util.Objects;
 import io.github.jjdelcerro.javarcs.lib.commands.CheckoutOptions;
+import java.io.PrintStream;
 
 /**
  * Clase que encapsula las opciones para el comando `co` (checkout). Adaptado de
@@ -24,6 +25,7 @@ public class CheckoutOptionsImpl implements CheckoutOptions {
   private boolean force; // -f flag (sobrescribir si existe)
   private boolean pipeOut; // -p flag (escribir a stdout)
   private boolean preserveTime; // -T flag (preservar tiempo de modificación)
+  private PrintStream out;
 
   public CheckoutOptionsImpl(Path workFilePath) {
     this.workFilePath = Objects.requireNonNull(workFilePath, "Work file path cannot be null");
@@ -155,5 +157,15 @@ public class CheckoutOptionsImpl implements CheckoutOptions {
   public CheckoutOptionsImpl setPreserveTime(boolean preserveTime) {
     this.preserveTime = preserveTime;
     return this;
+  }
+
+  @Override
+  public void setOutputStream(PrintStream out) {
+    this.out = out;
+  }
+
+  @Override
+  public PrintStream getOutputStream() {
+    return this.out;
   }
 }
