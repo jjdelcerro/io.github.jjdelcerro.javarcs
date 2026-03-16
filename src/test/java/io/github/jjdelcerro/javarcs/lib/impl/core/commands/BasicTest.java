@@ -11,9 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Disabled;
 
@@ -45,9 +48,12 @@ class BasicTest {
     
     private void do_first_revision() throws IOException {
         generate_text_file("r1");
+        
         RCSManager manager = RCSLocator.getRCSManager();
 
         Path workFile = tempDir.resolve("test.txt");
+        Files.copy(workFile, Path.of(workFile.toString()+".r1"));
+        
         CheckinOptions checkinOptions = manager.createCheckinOptions(workFile)
                 .setMessage("Primer check-in inicial.")
                 .setAuthor("tester")
@@ -64,6 +70,7 @@ class BasicTest {
         RCSManager manager = RCSLocator.getRCSManager();
 
         Path workFile = tempDir.resolve("test.txt");
+        Files.copy(workFile, Path.of(workFile.toString()+".r2"));
         CheckinOptions checkinOptions = manager.createCheckinOptions(workFile)
                 .setMessage("Segunda revision")
                 .setAuthor("tester")
@@ -80,7 +87,7 @@ class BasicTest {
      * - Verifica que el fichero RCS (,jv) ha sido creado correctamente.
      */
     @Test
-    @Disabled
+//    @Disabled
     void checkCreateFirstRevision() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -99,7 +106,7 @@ class BasicTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     void checkCreateWith2Revisions() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -119,29 +126,46 @@ class BasicTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     void checkCreateWith2RevisionsAndCheckoutR1() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
         do_first_revision();
         do_second_revision();
         
-        Path rcsFile = tempDir.resolve("test.txt,jv");
+        Path workFile = tempDir.resolve("test.txt");
+        String workFileContents = FileUtils.readFileToString(workFile.toFile(), StandardCharsets.UTF_8);
+        String r1FileContents = FileUtils.readFileToString(tempDir.resolve("test.txt.r1").toFile(), StandardCharsets.UTF_8);
+        String r2FileContents = FileUtils.readFileToString(tempDir.resolve("test.txt.r2").toFile(), StandardCharsets.UTF_8);
+        
+        Path rcsFile = tempDir.resolve("test.txt,jv");        
         RCSFile rcs = manager.getRCSFile(rcsFile);
+        assertThat(rcsFile).exists();
+        assertThat(rcsFile).isRegularFile();
         assertThat(rcs.getDeltas()).isNotEmpty().hasSize(2);
 
-        CheckoutOptions checkoutOptions = manager.createCheckoutOptions(rcsFile)
+        CheckoutOptions checkoutOptions = manager.createCheckoutOptions(tempDir.resolve("test.txt"))
                 .setRevision("1.1")
                 .setQuiet(true)
+                .setPipeOut(false)
+                .setForce(true)
         ;
         RCSCommand command = manager.create(checkoutOptions);
         command.execute(checkoutOptions);
         
-        assertThat(rcsFile).exists();
-        assertThat(rcsFile).isRegularFile();
-
-        Path workFile = tempDir.resolve("test.txt");
         assertThat(workFile).exists();
         assertThat(workFile).isRegularFile();
+        assertThat(workFileContents).isEqualTo(r2FileContents);
+        
+        checkoutOptions = manager.createCheckoutOptions(tempDir.resolve("test.txt"))
+                .setRevision("1.2")
+                .setQuiet(true)
+                .setPipeOut(false)
+                .setForce(true)
+        ;
+        command = manager.create(checkoutOptions);
+        
+        command.execute(checkoutOptions);
+        assertThat(workFileContents).isEqualTo(r2FileContents);
     }
 }
