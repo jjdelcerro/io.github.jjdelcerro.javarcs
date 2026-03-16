@@ -14,11 +14,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.Disabled;
 
 /**
  * Pruebas de integración para el comando Checkin (ci).
@@ -87,7 +85,6 @@ class BasicTest {
      * - Verifica que el fichero RCS (,jv) ha sido creado correctamente.
      */
     @Test
-//    @Disabled
     void checkCreateFirstRevision() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -106,7 +103,6 @@ class BasicTest {
     }
 
     @Test
-//    @Disabled
     void checkCreateWith2Revisions() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -126,7 +122,6 @@ class BasicTest {
     }
 
     @Test
-//    @Disabled
     void checkCreateWith2RevisionsAndCheckoutR1() throws Exception {
         RCSManager manager = RCSLocator.getRCSManager();
 
@@ -144,7 +139,7 @@ class BasicTest {
         assertThat(rcsFile).isRegularFile();
         assertThat(rcs.getDeltas()).isNotEmpty().hasSize(2);
 
-        CheckoutOptions checkoutOptions = manager.createCheckoutOptions(tempDir.resolve("test.txt"))
+        CheckoutOptions checkoutOptions = manager.createCheckoutOptions(workFile)
                 .setRevision("1.1")
                 .setQuiet(true)
                 .setPipeOut(false)
@@ -157,7 +152,7 @@ class BasicTest {
         assertThat(workFile).isRegularFile();
         assertThat(workFileContents).isEqualTo(r2FileContents);
         
-        checkoutOptions = manager.createCheckoutOptions(tempDir.resolve("test.txt"))
+        checkoutOptions = manager.createCheckoutOptions(workFile)
                 .setRevision("1.2")
                 .setQuiet(true)
                 .setPipeOut(false)
