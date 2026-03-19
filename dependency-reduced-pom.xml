@@ -4,7 +4,7 @@
   <groupId>io.github.jjdelcerro</groupId>
   <artifactId>io.github.jjdelcerro.javarcs</artifactId>
   <name>${project.artifactId}</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <description>Reimplementacion de las utilidades de OpenRCS (ci, co, etc.) en Java, utilizando el formato diff unificado.</description>
   <build>
     <plugins>
