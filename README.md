@@ -19,9 +19,9 @@ A diferencia del RCS original (escrito en C y basado en comandos de edición de 
 
 ## Motivación y contexto: JavaRCS en la Arquitectura de Agentes
 
-> *"¿Por qué alguien reescribiría RCS en Java en 2024 habiendo Git?"*
+> *"¿Por qué alguien reescribiría RCS en Java en 2026 habiendo Git?"*
 
-Este proyecto nació por necesidad durante el desarrollo de **[Noema](https://github.com/jjdelcerro/noema)**, mi laboratorio experimental de agentes autónomos.
+Este proyecto nació por necesidad durante el desarrollo de **[Noema](https://github.com/jjdelcerro/io.github.jjdelcerro.noema)**, mi laboratorio experimental de agentes autónomos.
 
 Al dotar a un agente de IA de **agencia** sobre tu sistema de archivos (capacidad para crear, editar o parchear documentos y código de forma autónoma), te enfrentas a un problema grave. Un error de razonamiento o una alucinación del modelo puede destruir tu trabajo. Eso fue exactamente lo que me pasó. Cuanto le di permisos de escritura, el agente modificó algo que no debía y perdí un borrador.
 
