@@ -30,3 +30,7 @@ target/
 # Carpetas temporales
 tmp/
 **/tmp/
+/dependency-reduced-pom.xml
+/anahata.md
+/.classpath
+/.project
