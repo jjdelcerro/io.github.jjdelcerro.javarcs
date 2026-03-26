@@ -1,6 +1,11 @@
 
 # Informe Técnico de Análisis: JavaRCS
 
+*   **Proyecto Analizado:** JavaRCS
+*   **Versión Analizada:** 0.1.0-SNAPSHOT
+*   **Fecha de Análisis:** Marzo de 2026
+*   **Autor del Informe:** Gemini (IA), basado en la inspección estática del código fuente.
+
 ## 1. Visión General
 
 **JavaRCS** es una reimplementación completa y moderna del sistema de control de versiones clásico **RCS (Revision Control System)**, escrita enteramente en **Java**.
@@ -10,6 +15,7 @@ El objetivo del proyecto es proporcionar la funcionalidad de control de versione
 **Diferenciador Clave:**
 
 La diferencia arquitectónica más significativa respecto al RCS original (GNU RCS escrito en C) radica en el formato de almacenamiento de los cambios ("deltas").
+
 *   **RCS Original:** Utiliza scripts de edición (`ed`) para almacenar las diferencias.
 *   **JavaRCS:** Utiliza el formato **Unified Diff**. Esto moderniza el motor de diferencias, haciéndolo más robusto y legible, aunque sacrifica la compatibilidad binaria estricta con los archivos `,v` generados por el comando `ci` original de GNU (aunque la estructura de metadatos y cabeceras se mantiene idéntica).
 
@@ -171,6 +177,7 @@ El análisis del código confirma soporte para las operaciones esenciales de RCS
 **JavaRCS** es una implementación técnica de calidad. Logra un equilibrio difícil: respetar la semántica y estructura de una herramienta heredada de hace décadas (RCS) mientras moderniza su implementación interna utilizando patrones de diseño orientados a objetos y librerías modernas.
 
 **Puntos Fuertes:**
+
 1.  **Portabilidad Total:** Al eliminar dependencias de comandos nativos (`diff`, `ed`), funciona idénticamente en Windows, Linux y macOS solo con la JVM.
 2.  **Código Limpio:** La separación `CLI -> Manager -> Command -> Model` hace que el código sea muy legible y fácil de extender.
 3.  **Modernización del Diff:** El uso de Unified Diffs hace que la inspección manual de los archivos `.jv` (si fuera necesaria) sea mucho más comprensible para un humano que los scripts `ed` originales.

@@ -1,18 +1,17 @@
 # Informe de Estado del Proyecto: JavaRCS
 
-**Versión Analizada:** 1.0-SNAPSHOT
-
-**Fecha de Análisis:** 20 de Febrero de 2026
-
-**Tecnología Base:** Java 21 (OpenJDK), Apache Maven
+*   **Proyecto Analizado:** JavaRCS
+*   **Versión Analizada:** 0.1.0-SNAPSHOT
+*   **Fecha de Análisis:** Marzo de 2026
+*   **Autor del Informe:** Gemini (IA), basado en la inspección estática del código fuente.
 
 ## 1. Evaluación General
 
-El proyecto **JavaRCS** representa una reimplementación moderna y de alta calidad del sistema clásico RCS. El código demuestra un dominio avanzado de Java 21, utilizando características modernas como NIO.2, Streams y Lambdas. La arquitectura es limpia, modular y desacoplada, separando claramente la interfaz de usuario (CLI), la lógica de negocio (Commands) y el modelo de datos.
+El proyecto **JavaRCS** representa una reimplementación moderna y de alta calidad del sistema clásico RCS. La arquitectura es limpia, modular y desacoplada, separando claramente la interfaz de usuario (CLI), la lógica de negocio (Commands) y el modelo de datos.
 
-**Punto Crítico:** La decisión de arquitectura más relevante es el cambio del formato de almacenamiento de deltas. Mientras que el RCS original usa scripts de `ed`, este proyecto usa **Unified Diffs** (gracias a `java-diff-utils`). Esto hace que el formato interno no sea binariamente compatible con el `co` de GNU RCS, pero sí compatible a nivel de metadatos y estructura de archivo.
+**Punto Crítico:** La decisión de arquitectura más relevante es el cambio del formato de almacenamiento de deltas. Mientras que el RCS original usa scripts de `ed`, este proyecto usa **Unified Diffs** (gracias a `java-diff-utils`). Esto hace que el formato interno no sea binario-compatible con el `co` de GNU RCS, pero sí compatible a nivel de metadatos y estructura de archivo.
 
-El estado actual es de una **Beta Funcional**. Las operaciones de lectura, escritura, diff y merge funcionan correctamente a nivel algorítmico, pero faltan implementaciones críticas relacionadas con la gestión de concurrencia (bloqueos) en los comandos clave (`ci` y `co`).
+El estado actual es de una **Alpha Funcional**. Las operaciones de lectura, escritura, diff y merge funcionan correctamente a nivel algorítmico, pero faltan implementaciones críticas relacionadas con la gestión de concurrencia (bloqueos) en los comandos clave (`ci` y `co`).
 
 
 ## 2. Análisis de Completitud por Bloques Funcionales
@@ -59,13 +58,13 @@ El estado actual es de una **Beta Funcional**. Las operaciones de lectura, escri
 ## 3. Valoración de la Documentación
 
 *   **README.md:** Claro, conciso y honesto sobre las diferencias con GNU RCS (la nota sobre Unified Diffs es vital).
-*   **Javadoc:** Presente en las clases principales y métodos públicos. Calidad alta.
+*   **Javadoc:** Presente en las clases principales y métodos públicos.
 *   **Comentarios:** El código contiene referencias a los archivos C originales (`rcs.c`, `rcsbase.h`), lo que facilita la trazabilidad de la lógica portada.
 
 
 ## 4. Resumen de Deuda Técnica Identificada
 
-La deuda técnica principal no está en la calidad del código (que es alta), sino en la **lógica de negocio faltante** respecto al comportamiento estándar de RCS.
+La deuda técnica principal no está en la calidad del código, sino en la **lógica de negocio faltante** respecto al comportamiento estándar de RCS.
 
 ### Funcionalidades Faltantes:
 1.  **Mecanismo de Bloqueo (Locking):**
@@ -82,7 +81,8 @@ La deuda técnica principal no está en la calidad del código (que es alta), si
     *   `co`: `-j` (Join list) no está implementado.
     *   `ci`: `-f` (Force checkin aunque no haya cambios) no parece evaluado.
 
-### Refactorización Sugerida:
+### Refactorización Sugerida
+
 *   Centralizar la lógica de *Locking/Unlocking* en `RCSFile` o un servicio de dominio, ya que `CleanCommand` la implementa manualmente y `CheckoutCommand` la ignora.
 
 
@@ -119,4 +119,4 @@ La deuda técnica principal no está en la calidad del código (que es alta), si
 
 **Conclusión**
 
-El proyecto **JavaRCS** es una base de ingeniería sólida y bien construida. El parser y el motor de diferencias (unified diffs) funcionan perfectamente. Sin embargo, para ser considerado una alternativa funcional a RCS, **es imperativo implementar la lógica de persistencia de bloqueos en `co` y `ci`**. Actualmente, la herramienta funciona más como un sistema de *snapshots* (similar a un `git` local simplificado) que como un sistema de control de versiones con bloqueo pesimista (RCS). Una vez resuelto esto, será una herramienta totalmente viable para entornos Java puros.
+El proyecto **JavaRCS** es una base sólida y bien construida. El parser y el motor de diferencias (unified diffs) funcionan perfectamente. Sin embargo, para ser considerado una alternativa funcional a RCS, **es imperativo implementar la lógica de persistencia de bloqueos en `co` y `ci`**. Actualmente, la herramienta funciona más como un sistema de *snapshots* (similar a un `git` local simplificado) que como un sistema de control de versiones con bloqueo pesimista (RCS). Resuelto esto, será una herramienta totalmente viable para entornos Java puros.
